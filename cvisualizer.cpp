@@ -20,3 +20,16 @@ CVisualizer::~CVisualizer() {
 	SDL_DestroyWindow(m_window);
 	SDL_Quit();
 }
+
+void CVisualizer::_clear() {
+	SDL_SetRenderDrawColor(m_renderer, 255, 255, 255);
+	SDL_RenderClear(m_renderer);
+	for(int x = 0; x < WINDOW_WIDTH; x+= CELL_SIZE) 
+		SDL_RenderDrawLine(m_renderer, x, 0, x, WINDOW_HEIGHT);
+	for(int y= 0; y < WINDOW_HEIGHT; x += CELL_SIZE) {
+		SDL_RenderDrawLine(m_renderer, 0, y, WINDOW_WIDTH, y);
+}
+
+void CVisualizer::redraw() {
+	_clear();
+}
