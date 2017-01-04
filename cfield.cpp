@@ -12,20 +12,20 @@ CField::CField(const std::string& input) {
 	}
 }
 
+CField::CField() {
+	_init_state(HCELLS, VCELLS);
+}
+
 void CField::_init_state(State& state, size_t sizex, size_t sizey) {
 	state.resize(sizex);
-#ifdef MULTITHREAD
 #pragma omp parallel 
 {
 #pragma omp for 
-#endif
 	for(size_t i = 0; i < sizex; ++i) {
 		state[i].resize(sizey);
 		for(size_t j = 0; j < sizey; j++) state[i][j] = false;
 	}
-#ifdef MULTITHREAD
 }
-#endif
 }
 
 int CField::_neighbours(size_t x, size_t y) const {
@@ -36,6 +36,18 @@ int CField::_neighbours(size_t x, size_t y) const {
 	return (int)m_state[north_x][y] + (int)m_state[south_x][y] + (int)m_state[x][west_y] + (int)m_state[x][east_y]
 		+ (int)m_state[north_x][west_y] + (int)m_state[north_x][east_y] + (int)m_state[south_x][west_y]
 		+ (int)m_state[south_x][east_y];
+}
+
+void CField::add_element(size_t x, size_t y) {
+	m_state[x][y] = true;
+}
+
+void CField::delete_element(size_t x, size_t y) {
+	m_state[x][y] = false;
+}
+
+bool CField::cell_state(size_t x, size_t y) {
+	return m_state[x][y];
 }
 
 void CField::write_state(const std::string& output) const {
@@ -49,11 +61,9 @@ void CField::write_state(const std::string& output) const {
 void CField::step(State& result_state) {
 	State next_state;
 	_init_state(next_state, m_state.size(), m_state[0].size());
-#ifdef MULTITHREAD
 #pragma omp parallel
 {
 #pragma omp for 
-#endif 
 	for(size_t i = 0; i < m_state.size(); ++i) {
 		for(size_t j = 0; j < m_state[0].size(); ++j) {
 			size_t n = _neighbours(i, j);
@@ -62,9 +72,7 @@ void CField::step(State& result_state) {
 			else next_state[i][j] = false;
 		}
 	}
-#ifdef MULTITHREAD
 }
-#endif
 	m_state = next_state;
 	result_state = m_state;
 }
