@@ -2,7 +2,9 @@
 #include <cstring>
 #include <iostream>
 #include <fstream>
-#include "cfield.h"
+#include <chrono>
+#include <thread>
+#include "cvisualizer.h"
 
 #ifdef MULTITHREAD
 #define MAX_THREADS 12
@@ -22,26 +24,21 @@ int main(int argc, char** argv) {
 	std::ofstream out_time("out.dat");
 	std::ofstream out_eff("eff.dat");
 
-#ifdef MULTITHREAD
-	for(int i = 1; i < MAX_THREADS; ++i) {
-		omp_set_num_threads(i);
-		double begin, end;
+	omp_set_num_threads(omp_get_max_threads());
+	CField* field = new CField("state.dat");
+	CVisualizer* visualizer = new CVisualizer(); 
+	State cur_state;
+	double begin, end;
+	while(time != 0) {
 		begin = omp_get_wtime();
-#endif
-		CField* field = new CField("state.dat");
-		while(time != 0) {
-			field->step();
-			--time;
-		}
-		field->write_state("life.dat");
-		delete field;
-#ifdef MULTITHREAD
+		field->step(cur_state);
+		visualizer->redraw(cur_state);
+		--time;
 		end = omp_get_wtime();
-		if(i == 1) etalon = end - begin;
-		std::cout << "Num of threads: " << i << "; time: " << end - begin << std::endl;
-		out_time << i << ":" << (end - begin) / etalon << std::endl;
-		out_eff << i << ":" << (end - begin) / (etalon * i) << std::endl;
+		std::chrono::duration<double, std::milli> timespan = 1000 - (end - begin) * 1000;
+		std::this_thread::sleep_for(timespan);
 	}
-#endif
+	field->write_state("life.dat");
+	delete field;
 	return 0;
 }

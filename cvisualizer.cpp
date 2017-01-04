@@ -30,6 +30,22 @@ void CVisualizer::_clear() {
 		SDL_RenderDrawLine(m_renderer, 0, y, WINDOW_WIDTH, y);
 }
 
-void CVisualizer::redraw() {
+void CVisualizer::_draw_rect(size_t x, size_t y) {
+	SDL_Rect* rect = new SDL_Rect();
+	rect.x = x * CELL_SIZE; 
+	rect.y = y * CELL_SIZE;
+	rect.w = CELL_SIZE;
+	rect.h = CELL_SIZE;
+	SDL_RenderDrawRect(m_renderer, rect);
+	delete rect;
+}
+
+void CVisualizer::redraw(const State& state) {
 	_clear();
+	SDL_SetRenderDrawColor(m_renderer, 0, 0, 0);
+	size_t xsize = state.size();
+	size_t ysize = state[0].size();
+	for(size_t x = 0; x < xsize; ++x) 
+		for(size_t y = 0; y < ysize; ++y) 
+			if(state[x][y]) _draw_rect(x, y); 
 }

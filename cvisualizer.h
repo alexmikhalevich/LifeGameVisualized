@@ -1,5 +1,6 @@
 #include <SDL2/SDL.h>
 #include <iostream>
+#include "cfield.h"
 
 #define VCELLS 100
 #define HCELLS 100
@@ -14,8 +15,9 @@ class CVisualizer {
 		SDL_Window* m_window;
 		SDL_Renderer* m_renderer;
 		void _clear();
+		void _draw_rect(size_t x, size_t y);
 	public:
 		CVisualizer();
 		~CVisualizer();
-		void redraw();
+		void redraw(const State& state);
 };

@@ -15,6 +15,6 @@ class CField {
 		int _neighbours(size_t x, size_t y) const;
 	public:
 		CField(const std::string& input);
-		void step();
+		void step(State& result_state);
 		void write_state(const std::string& output) const;
 };

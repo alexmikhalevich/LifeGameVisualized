@@ -46,7 +46,7 @@ void CField::write_state(const std::string& output) const {
 			if(m_state[i][j]) out << i << " " << j << std::endl;
 }
 
-void CField::step() {
+void CField::step(State& result_state) {
 	State next_state;
 	_init_state(next_state, m_state.size(), m_state[0].size());
 #ifdef MULTITHREAD
@@ -66,4 +66,5 @@ void CField::step() {
 }
 #endif
 	m_state = next_state;
+	result_state = m_state;
 }
