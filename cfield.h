@@ -16,9 +16,10 @@ class CField {
 	public:
 		CField(const std::string& input);
 		CField();
-		void step(State& result_state);
+		void step();
 		void write_state(const std::string& output) const;
 		void add_element(size_t x, size_t y);
 		void delete_element(size_t x, size_t y);
 		bool cell_state(size_t x, size_t y);
+		void get_state(State& state) const;
 };

@@ -1,9 +1,10 @@
 #include <SDL2/SDL.h>
 #include <iostream>
 #include <chrono>
+#include <thread>
 #include "cfield.h"
 
-#define CELL_SIZE 5
+#define CELL_SIZE 10
 #define WINDOW_WIDTH HCELLS * CELL_SIZE
 #define WINDOW_HEIGHT VCELLS * CELL_SIZE
 #define LINE_WIDTH 1
@@ -19,9 +20,10 @@ class CVisualizer {
 		void _draw_rect(size_t x, size_t y);
 		void _add_rect(int x, int y);
 		void _delete_rect(int x, int y);
-		void _redraw();
+		void _redraw(bool do_step);
+		void _init();
 	public:
-		CVisualizer();
+		CVisualizer() {}
 		~CVisualizer();
 		void init();
 };

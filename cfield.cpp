@@ -13,7 +13,7 @@ CField::CField(const std::string& input) {
 }
 
 CField::CField() {
-	_init_state(HCELLS, VCELLS);
+	_init_state(m_state, HCELLS, VCELLS);
 }
 
 void CField::_init_state(State& state, size_t sizex, size_t sizey) {
@@ -58,7 +58,7 @@ void CField::write_state(const std::string& output) const {
 			if(m_state[i][j]) out << i << " " << j << std::endl;
 }
 
-void CField::step(State& result_state) {
+void CField::step() {
 	State next_state;
 	_init_state(next_state, m_state.size(), m_state[0].size());
 #pragma omp parallel
@@ -74,5 +74,8 @@ void CField::step(State& result_state) {
 	}
 }
 	m_state = next_state;
-	result_state = m_state;
+}
+
+void CField::get_state(State& state) const {
+	state = m_state;
 }
