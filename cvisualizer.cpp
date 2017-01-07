@@ -27,11 +27,6 @@ void CVisualizer::_init() {
 void CVisualizer::_clear() {
 	SDL_SetRenderDrawColor(m_renderer, 255, 255, 255, 0);
 	SDL_RenderClear(m_renderer);
-	for(int x = 0; x < WINDOW_WIDTH; x += CELL_SIZE) 
-		SDL_RenderDrawLine(m_renderer, x, 0, x, WINDOW_HEIGHT);
-	for(int y = 0; y < WINDOW_HEIGHT; y += CELL_SIZE) 
-		SDL_RenderDrawLine(m_renderer, 0, y, WINDOW_WIDTH, y);
-	SDL_RenderPresent(m_renderer);
 }
 
 void CVisualizer::_add_rect(int x, int y) {
@@ -57,8 +52,6 @@ void CVisualizer::_draw_rect(size_t x, size_t y) {
 }
 
 void CVisualizer::_redraw(bool do_step) {
-	double begin, end;
-	begin = omp_get_wtime();
 	State state;
 	if(do_step) m_field->step();
 	m_field->get_state(state);
@@ -70,19 +63,13 @@ void CVisualizer::_redraw(bool do_step) {
 		for(size_t y = 0; y < ysize; ++y) 
 			if(state[x][y]) _draw_rect(x, y); 
 	SDL_RenderPresent(m_renderer);
-	end = omp_get_wtime();
-	/*
-	if(end - begin < 1) {
-		std::chrono::duration<double, std::milli> timespan(SLEEP_TIME - (end - begin) * 1000);
-		std::this_thread::sleep_for(timespan);
-	}
-	*/
 }
 
 void CVisualizer::init() {
 	_init();
 	SDL_Event event;
 	bool quit = false;
+	bool process = false;
 	while(!quit) {
 		SDL_WaitEvent(&event);
 		if(event.type == SDL_QUIT) 
@@ -94,10 +81,9 @@ void CVisualizer::init() {
 				_delete_rect(event.button.x, event.button.y);
 		}
 		else if(event.type == SDL_KEYDOWN) {
-			if(event.key.keysym.sym == SDLK_RETURN) {
-				quit = true;
-			}
+			if(event.key.keysym.sym == SDLK_RETURN) 
+				process = true;
 		}
-		_redraw(false);
+		_redraw(process);
 	}
 }

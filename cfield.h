@@ -3,8 +3,8 @@
 #include <string>
 #include <omp.h>
 
-#define VCELLS 100
-#define HCELLS 100
+#define VCELLS 50
+#define HCELLS 50
 
 typedef std::vector<std::vector<bool>> State;
 
