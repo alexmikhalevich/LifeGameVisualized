@@ -8,7 +8,7 @@
 #define WINDOW_WIDTH HCELLS * CELL_SIZE
 #define WINDOW_HEIGHT VCELLS * CELL_SIZE
 #define LINE_WIDTH 1
-#define SLEEP_TIME 1
+#define SLEEP_TIME 200
 
 class CVisualizer {
 	private:
