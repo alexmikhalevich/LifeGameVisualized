@@ -25,6 +25,7 @@ void CVisualizer::_init() {
 }
 
 void CVisualizer::_clear() {
+	std::cout << "clear" << std::endl;
 	SDL_SetRenderDrawColor(m_renderer, 255, 255, 255, 0);
 	SDL_RenderClear(m_renderer);
 }
@@ -35,12 +36,14 @@ void CVisualizer::_add_rect(int x, int y) {
 }
 
 void CVisualizer::_delete_rect(int x, int y) {
+	std::cout << "delete rect" << std::endl;
 	m_field->delete_element(x / CELL_SIZE, y / CELL_SIZE);
 	SDL_SetRenderDrawColor(m_renderer, 255, 255, 255, 0);
 	_draw_rect(x / CELL_SIZE, y / CELL_SIZE);
 }
 
 void CVisualizer::_draw_rect(size_t x, size_t y) {
+	std::cout << "draw rect" << std::endl;
 	SDL_Rect* rect = new SDL_Rect();
 	rect->x = x * CELL_SIZE; 
 	rect->y = y * CELL_SIZE;
@@ -70,20 +73,26 @@ void CVisualizer::init() {
 	SDL_Event event;
 	bool quit = false;
 	bool process = false;
+	unsigned int last_time = 0, current_time;
 	while(!quit) {
-		SDL_WaitEvent(&event);
-		if(event.type == SDL_QUIT) 
-			quit = true;
-		else if(event.type == SDL_MOUSEBUTTONDOWN && event.button.button == SDL_BUTTON_LEFT) {
-			if(!m_field->cell_state(event.button.x / CELL_SIZE, event.button.y / CELL_SIZE))
-				_add_rect(event.button.x, event.button.y);
-			else
-				_delete_rect(event.button.x, event.button.y);
+		while(SDL_PollEvent(&event)) {
+			if(event.type == SDL_QUIT) 
+				quit = true;
+			else if(event.type == SDL_MOUSEBUTTONDOWN && event.button.button == SDL_BUTTON_LEFT) {
+				if(!m_field->cell_state(event.button.x / CELL_SIZE, event.button.y / CELL_SIZE))
+					_add_rect(event.button.x, event.button.y);
+				else
+					_delete_rect(event.button.x, event.button.y);
+			}
+			else if(event.type == SDL_KEYDOWN) {
+				if(event.key.keysym.sym == SDLK_RETURN) 
+					process = true;
+			}
 		}
-		else if(event.type == SDL_KEYDOWN) {
-			if(event.key.keysym.sym == SDLK_RETURN) 
-				process = true;
+		current_time = SDL_GetTicks();
+		if(current_time > last_time + SLEEP_TIME) {
+			last_time = current_time;
+			_redraw(process);
 		}
-		_redraw(process);
 	}
 }
