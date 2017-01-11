@@ -22,34 +22,30 @@ void CVisualizer::_init() {
 	}
 	m_field = new CField();
 	_clear();
+	_draw_rect(0, 0);	//some kind of magic. without this line renderer always renders white rectangles
 }
 
 void CVisualizer::_clear() {
-	std::cout << "clear" << std::endl;
 	SDL_SetRenderDrawColor(m_renderer, 255, 255, 255, 0);
 	SDL_RenderClear(m_renderer);
 }
 
 void CVisualizer::_add_rect(int x, int y) {
-	std::cout << "add rect" << std::endl;
 	m_field->add_element(x / CELL_SIZE, y / CELL_SIZE);
 }
 
 void CVisualizer::_delete_rect(int x, int y) {
-	std::cout << "delete rect" << std::endl;
 	m_field->delete_element(x / CELL_SIZE, y / CELL_SIZE);
-	SDL_SetRenderDrawColor(m_renderer, 255, 255, 255, 0);
-	_draw_rect(x / CELL_SIZE, y / CELL_SIZE);
 }
 
 void CVisualizer::_draw_rect(size_t x, size_t y) {
-	std::cout << "draw rect" << std::endl;
 	SDL_Rect* rect = new SDL_Rect();
 	rect->x = x * CELL_SIZE; 
 	rect->y = y * CELL_SIZE;
 	rect->w = CELL_SIZE;
 	rect->h = CELL_SIZE;
-	SDL_RenderFillRect(m_renderer, rect);
+	if(SDL_RenderFillRect(m_renderer, rect) != 0)
+		std::cerr << SDL_GetError() << std::endl;
 	delete rect;
 }
 
