@@ -49,7 +49,6 @@ void CVisualizer::_draw_rect(size_t x, size_t y) {
 	rect->y = y * CELL_SIZE;
 	rect->w = CELL_SIZE;
 	rect->h = CELL_SIZE;
-	SDL_RenderDrawRect(m_renderer, rect);
 	SDL_RenderFillRect(m_renderer, rect);
 	delete rect;
 }
@@ -78,7 +77,7 @@ void CVisualizer::init() {
 		while(SDL_PollEvent(&event)) {
 			if(event.type == SDL_QUIT) 
 				quit = true;
-			else if(event.type == SDL_MOUSEBUTTONDOWN && event.button.button == SDL_BUTTON_LEFT) {
+			else if(event.type == SDL_MOUSEBUTTONDOWN && event.button.button == SDL_BUTTON_LEFT && !process) {
 				if(!m_field->cell_state(event.button.x / CELL_SIZE, event.button.y / CELL_SIZE))
 					_add_rect(event.button.x, event.button.y);
 				else
