@@ -1,5 +1,5 @@
 CC=g++
-CFLAGS=-c -std=c++11 -Wall -fopenmp
+CFLAGS=-c -g -std=c++11 -Wall -fopenmp
 LFLAGS=-lSDL2 -fopenmp
 
 all: main.o cvisualizer.o cfield.o
